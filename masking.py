@@ -66,7 +66,7 @@ def mask_using_NER(text):
     for ent in doc.ents:
         word = re.sub(r'\'S', '', ent.text.upper())
         word_pattern = re.escape(word).replace(r'\ ', r'\s*').replace(r'\.', r'\.?')
-        pattern = rf'\b(?:[$€₹¥£])?\s*(?:Mr\.|Mrs\.|Ms\.|Dr\.)?\s*{word_pattern}(?:\'s)?\s*(?:.)?\s*(?:,)?\b'
+        pattern = rf'(?:[$€₹¥£])?\b\s*(?:Mr\.|Mrs\.|Ms\.|Dr\.)?\s*{re.escape(word)}(?:\'s)?\s*(?:\.)?\s*(?:,)?\b'
 
         if ent.label_ in item_dict:
             if (word not in item_dict[ent.label_]):
