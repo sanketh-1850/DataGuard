@@ -1,13 +1,13 @@
 import masking
 
 def main():
-    inp = '''At Innovate Solutions Pvt. Ltd., we are committed to providing exceptional service while maintaining transparency with our stakeholders. As part of our growth strategy, we are pleased to announce the acquisition of TechSynergy LLC to expand our portfolio in AI-driven analytics.
+    inp = '''We are thrilled to announce that Prime Analytics Pvt. Ltd. has successfully acquired VisionAI Systems, a leader in image recognition technology.
 
-    This acquisition involves an investment of ₹12,50,00,000, which has been secured through strategic funding from Global Ventures Capital, led by our CFO, Mr. Arjun Nair. For inquiries related to this acquisition, please contact Mr. Nair directly at arjun.nair@innovatesolutions.com or +91-9812345678.
+The acquisition, valued at ₹6,25,00,000, was led by Mr. Rahul Khanna, our Head of Corporate Finance. For questions regarding this acquisition, please contact him at rahul.khanna@primeanalytics.com or call +91-9123456789.
 
-    All teams involved in the transition will receive additional instructions from Ms. Pooja Singh, Head of Corporate Development, by January 20, 2025. Her contact details are pooja.singh@innovatesolutions.com and +91-9922334455.
+Transition plans for this integration will be shared by Ms. Neeta Deshmukh, VP of Operations, on January 30, 2025. She can be reached at neeta.deshmukh@primeanalytics.com or +91-9811223344.
 
-    We are excited about this new chapter and believe it will enable us to better serve our clients and expand our market reach.'''
+This move marks a significant milestone in expanding our capabilities in AI-powered analytics.'''
 
     inp = masking.mask_using_regex(inp)
 
