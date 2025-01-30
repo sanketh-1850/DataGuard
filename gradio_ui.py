@@ -1,5 +1,6 @@
 import gradio as gr
 import masking
+import re
 
 custom_head = """
 <iframe style="display:none" onload="
@@ -12,12 +13,15 @@ custom_head = """
 """
 
 custom_title = """
-<div">
+<div>
     <img src="https://cdn-icons-png.flaticon.com/512/6356/6356296.png" alt="Logo" style="display: block; margin: 0 auto; width: 80px; height: 80px; padding: 0px;">
     <h1 style="color: White; text-align: center; font-size: 35px;">
         DATAGUARD
     </h1>
-    <hr style = "padding-bottom: 40px;">
+    <p style="color: White; text-align: center; font-size: 20px; margin-top: 10px;">
+        Protecting Privacy, Empowering Data.
+    </p>
+    <hr style="padding-bottom: 40px;">
 </div>
 """
 
@@ -27,7 +31,8 @@ custom_footer = """
 </style>
 """
 
-def process_input(inp):
+
+def process_input(inp: str) -> str:
     inp = masking.mask_using_phonenumbers(inp)
 
     inp = masking.mask_using_regex(inp)
@@ -36,13 +41,22 @@ def process_input(inp):
 
     return (inp)
 
+def clear_function() -> tuple:
+    return '', ''
+
 def gradio_interface():
-    with gr.Blocks(theme = gr.themes.Soft(primary_hue="cyan")) as interface:
+    with gr.Blocks(theme = gr.themes.Soft(primary_hue="cyan"), fill_width = True) as interface:
         gr.HTML(custom_head)
         gr.HTML(custom_title)
         gr.HTML(custom_footer)
-        subinterface1 = gr.Interface(fn=process_input, inputs=[gr.Textbox(label = 'Raw Input', placeholder = "Enter input...", autofocus = True, lines = 20)],
-                            outputs=[gr.Textbox(label = 'Masked Output', show_copy_button = True, lines =20)],
-                            allow_flagging="never")
+        with gr.Column():
+            with gr.Row():
+                input_txt = gr.components.Textbox(label = 'Raw Input', placeholder = "Enter text here...", autofocus = True, lines = 20)
+                output_txt = gr.components.Textbox(label = 'Masked Output', show_copy_button = True, lines =20)
+            with gr.Row():
+                submit = gr.components.Button(value = 'Submit', variant = 'primary')
+                clear = gr.components.Button(value = 'Clear', variant = 'stop')
+        submit.click(process_input, [input_txt], [output_txt])
+        clear.click(clear_function, [], [input_txt, output_txt])
 
     interface.launch(share = False, show_api = False)
