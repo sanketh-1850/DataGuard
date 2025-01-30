@@ -1,5 +1,6 @@
 import spacy
 import re
+import phonenumbers
 
 nlp = spacy.load('en_core_web_sm')
 
@@ -23,22 +24,19 @@ DOB -
 def mask_using_regex(text):
     # Regular expression patterns
     patterns = {
-        'EMAILADDR': r'\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b',
-        'PHONE': r'(?:(?:\+|0{0,2})\b91(\s*|[\-])?|[0]?)?([6789]\d{2}([ -]?)\d{3}([ -]?)\d{4})\b',            # For Indian Phone Numbers
+        'EMAIL-ADDR': r'\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b',
         'CARD-NUMBER': r'\b(?<!\d)\d{16}(?!\d)|(?<!\d[ _-])(?<!\d)\d{4}(?:[_ -]\d{4}){3}(?![_ -]?\d)\b',
     }
 
     # Dictionaries to map data to placeholders
     mappings = {
-        'EMAILADDR': {},
-        'PHONE': {},
+        'EMAIL-ADDR': {},
         'CARD-NUMBER': {},
     }
 
     # Counter for each type of data
     counters = {
-        'EMAILADDR': 1,
-        'PHONE': 1,
+        'EMAIL-ADDR': 1,
         'CARD-NUMBER': 1,
     }
 
@@ -47,9 +45,9 @@ def mask_using_regex(text):
         def replacer(match):
             item = match.group(0)
             if item not in mappings[data_type]:
-                mappings[data_type][item] = f"{data_type.upper()}{counters[data_type]}"
+                mappings[data_type][item] = f"{data_type.upper()} {counters[data_type]}"
                 counters[data_type] += 1
-            return (' [' + mappings[data_type][item] + '] ')
+            return ('[' + mappings[data_type][item] + ']')
         return replacer
 
     # Perform substitutions
@@ -73,11 +71,32 @@ def mask_using_NER(text):
                 item_dict[ent.label_].append(word)
                 if (ent.label_ == 'MONEY'):
                     pattern = rf'(?:[$€₹¥£])?\b\s*(?:Mr\.|Mrs\.|Ms\.|Dr\.)?\s*{re.escape(word)}(?:\'s)?\s*(?:\.)?\s*(?:,)?\b'
-                text = re.sub(pattern, ' [' + ent.label_ + str(len(item_dict[ent.label_])) + '] ', text, flags = re.IGNORECASE)
+                text = re.sub(pattern, ' [' + ent.label_ + ' ' + str(len(item_dict[ent.label_])) + '] ', text, flags = re.IGNORECASE)
         else:
             item_dict[ent.label_] = [word]
             if (ent.label_ == 'MONEY'):
                     pattern = rf'(?:[$€₹¥£])?\b\s*(?:Mr\.|Mrs\.|Ms\.|Dr\.)?\s*{re.escape(word)}(?:\'s)?\s*(?:\.)?\s*(?:,)?\b'
-            text = re.sub(pattern, ' [' + ent.label_ + str(len(item_dict[ent.label_])) + '] ', text, flags = re.IGNORECASE)
+            text = re.sub(pattern, ' [' + ent.label_ + ' ' + str(len(item_dict[ent.label_])) + '] ', text, flags = re.IGNORECASE)
     
+    return (text)
+
+def mask_using_phonenumbers(text):
+    mappings = {'PHONE': {}}
+    counters = {'PHONE': 1}
+
+    def replace_generic(data_type):
+        def replacer(match):
+            item = match.group(0)
+            if item not in mappings[data_type]:
+                mappings[data_type][item] = f"{data_type.upper()} {counters[data_type]}"
+                counters[data_type] += 1
+            return ('[' + mappings[data_type][item] + ']')
+        return replacer
+
+    country_codes = list(phonenumbers.SUPPORTED_REGIONS)
+    for code in country_codes:
+        for match in phonenumbers.PhoneNumberMatcher(text, code):
+            pattern = re.escape(match.raw_string)
+            text = re.sub(pattern, replace_generic('PHONE'), text)
+
     return (text)
