@@ -144,7 +144,7 @@ def gradio_interface():
                 show_copy_button = True,
                 show_label = False,
                 elem_id = 'gemini_chat',
-                placeholder = 'What can I help you with?'
+                placeholder = '<strong><h2>What can I help you with?</h2></strong>'
             )
             with gr.Row():
                 clear = gr.ClearButton(elem_id = 'gemini_clear', value = '')
