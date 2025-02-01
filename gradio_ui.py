@@ -14,16 +14,35 @@ model = genai.GenerativeModel('gemini-2.0-flash-exp')
 custom_button = """
 <style>
     #gemini_submit {
-        margin: 0.2em 0em 0.2em 0;
-        max-width: 4.0em;
-        min-width: 4.0em !important;
-        height: 3.6em;
-        background-image: url('https://img.icons8.com/material-outlined/24/arrow.png');
+        margin: 0.5em 0em 0.5em 0.1em;
+        max-width: 3em;
+        min-width: 3em !important;
+        height: 3em;
+        background-image: url('https://img.icons8.com/fluency-systems-filled/48/sent.png');
         background-size: cover;
         background-repeat: no-repeat;
         border: none;
         background-position: center center;
-        background-size: 30px;
+        background-size: 25px;
+        border-radius: 50%;
+    }
+
+    #gemini_clear{
+        margin: 0.5em 0em 0.5em 0.1em;
+        max-width: 3em;
+        min-width: 3em !important;
+        height: 3em;
+        background-image: url('https://img.icons8.com/ios-filled/50/synchronize.png');
+        background-size: cover;
+        background-repeat: no-repeat;
+        border: none;
+        background-position: center center;
+        background-size: 25px;
+        border-radius: 50%;
+    }
+
+    #gemini_chat {
+        height: 490px !important;
     }
 </style>
 """
@@ -47,7 +66,7 @@ custom_title = """
     <p style="color: White; text-align: center; font-size: 20px; margin-top: 10px;">
         Protecting Privacy, Empowering Data.
     </p>
-    <hr style="padding-bottom: 5px;">
+    <hr style="padding-bottom: 0px;">
 </div>
 """
 
@@ -57,10 +76,19 @@ custom_footer = """
 </style>
 """
 
+
+def process_input(inp: str) -> str:
+    inp = masking.mask_using_phonenumbers(inp)
+
+    inp = masking.mask_using_regex(inp)
+
+    inp = masking.mask_using_NER(inp)
+
+    return (inp)
+
 def handle_user_query(msg, chatbot):
-    print(msg, chatbot)
     if(not (msg.isspace() or msg == '')):
-        chatbot += [[msg, None]]
+        chatbot += [[process_input(msg), None]]
     return ('', chatbot)
 
 def handle_gemini_response(chatbot):
@@ -90,16 +118,6 @@ def generate_chatbot(chatbot: list[list[str, str]]) -> list[list[str, str]]:
         )
     return formatted_chatbot
 
-
-def process_input(inp: str) -> str:
-    inp = masking.mask_using_phonenumbers(inp)
-
-    inp = masking.mask_using_regex(inp)
-
-    inp = masking.mask_using_NER(inp)
-
-    return (inp)
-
 def clear_function() -> tuple:
     return '', ''
 
@@ -125,11 +143,14 @@ def gradio_interface():
                 bubble_full_width = False,
                 show_copy_button = True,
                 show_label = False,
+                elem_id = 'gemini_chat',
+                placeholder = 'What can I help you with?'
             )
             with gr.Row():
-                msg = gr.Textbox(show_label = False, elem_id = 'gemini_text')
+                clear = gr.ClearButton(elem_id = 'gemini_clear', value = '')
+                msg = gr.Textbox(show_label = False, elem_id = 'gemini_text', placeholder = 'Ask Gemini')
+                clear.add([msg, chatbot])
                 submit = gr.components.Button(value = '', variant = 'primary', elem_id = 'gemini_submit')
-            clear = gr.ClearButton([msg, chatbot])
             msg.submit(
                 handle_user_query,
                 [msg, chatbot],
@@ -150,4 +171,4 @@ def gradio_interface():
                 [chatbot]
             )
 
-    interface.launch(share = True, show_api = False)
+    interface.launch(share = False, show_api = False)
