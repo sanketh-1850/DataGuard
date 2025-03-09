@@ -2,7 +2,7 @@ import spacy
 import re
 import phonenumbers
 
-nlp = spacy.load('en_core_web_sm')
+nlp = spacy.load('en_core_web_trf')
 
 
 '''
@@ -45,7 +45,7 @@ def mask_using_regex(text):
         def replacer(match):
             item = match.group(0)
             if item not in mappings[data_type]:
-                mappings[data_type][item] = f"{data_type.upper()} {counters[data_type]}"
+                mappings[data_type][item] = f"{data_type.upper()}_{counters[data_type]}"
                 counters[data_type] += 1
             return ('[' + mappings[data_type][item] + ']')
         return replacer
@@ -63,20 +63,19 @@ def mask_using_NER(text):
 
     for ent in doc.ents:
         word = re.sub(r'\'S', '', ent.text.upper())
-        word_pattern = re.escape(word).replace(r'\ ', r'\s*').replace(r'\.', r'\.?')
-        pattern = rf'\b\s*(?:Mr\.|Mrs\.|Ms\.|Dr\.)?\s*{re.escape(word)}(?:\'s)?\s*(?:.)?\s*(?:,)?\b'
+        pattern = rf'\b(?:Mr\.|Mrs\.|Ms\.|Dr\.)?\s*{re.escape(word)}(?:\'s)?(?:.)?(?:,)?\b'
 
         if ent.label_ in item_dict:
             if (word not in item_dict[ent.label_]):
                 item_dict[ent.label_].append(word)
                 if (ent.label_ == 'MONEY'):
-                    pattern = rf'(?:[$€₹¥£])?\b\s*(?:Mr\.|Mrs\.|Ms\.|Dr\.)?\s*{re.escape(word)}(?:\'s)?\s*(?:\.)?\s*(?:,)?\b'
-                text = re.sub(pattern, ' [' + ent.label_ + ' ' + str(len(item_dict[ent.label_])) + '] ', text, flags = re.IGNORECASE)
+                    pattern = rf'(?:[$€₹¥£])?\b\s*{re.escape(word)}\b'
+                text = re.sub(pattern, '[' + ent.label_ + '_' + str(len(item_dict[ent.label_])) + ']', text, flags = re.IGNORECASE)
         else:
             item_dict[ent.label_] = [word]
             if (ent.label_ == 'MONEY'):
-                    pattern = rf'(?:[$€₹¥£])?\b\s*(?:Mr\.|Mrs\.|Ms\.|Dr\.)?\s*{re.escape(word)}(?:\'s)?\s*(?:\.)?\s*(?:,)?\b'
-            text = re.sub(pattern, ' [' + ent.label_ + ' ' + str(len(item_dict[ent.label_])) + '] ', text, flags = re.IGNORECASE)
+                    pattern = rf'(?:[$€₹¥£])?\b\s*{re.escape(word)}\b'
+            text = re.sub(pattern, '[' + ent.label_ + '_' + str(len(item_dict[ent.label_])) + ']', text, flags = re.IGNORECASE)
     
     return (text)
 
@@ -88,7 +87,7 @@ def mask_using_phonenumbers(text):
         def replacer(match):
             item = match.group(0)
             if item not in mappings[data_type]:
-                mappings[data_type][item] = f"{data_type.upper()} {counters[data_type]}"
+                mappings[data_type][item] = f"{data_type.upper()}_{counters[data_type]}"
                 counters[data_type] += 1
             return ('[' + mappings[data_type][item] + ']')
         return replacer
