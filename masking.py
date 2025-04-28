@@ -47,7 +47,7 @@ def mask_using_regex(text):
             if item not in mappings[data_type]:
                 mappings[data_type][item] = f"{data_type.upper()}_{counters[data_type]}"
                 counters[data_type] += 1
-            return ('[' + mappings[data_type][item] + ']')
+            return ('[REDACTED_' + mappings[data_type][item] + ']')
         return replacer
 
     # Perform substitutions
@@ -70,12 +70,12 @@ def mask_using_NER(text):
                 item_dict[ent.label_].append(word)
                 if (ent.label_ == 'MONEY'):
                     pattern = rf'(?:[$€₹¥£])?\b\s*{re.escape(word)}\b'
-                text = re.sub(pattern, '[' + ent.label_ + '_' + str(len(item_dict[ent.label_])) + ']', text, flags = re.IGNORECASE)
+                text = re.sub(pattern, '[REDACTED_' + ent.label_ + '_' + str(len(item_dict[ent.label_])) + ']', text, flags = re.IGNORECASE)
         else:
             item_dict[ent.label_] = [word]
             if (ent.label_ == 'MONEY'):
                     pattern = rf'(?:[$€₹¥£])?\b\s*{re.escape(word)}\b'
-            text = re.sub(pattern, '[' + ent.label_ + '_' + str(len(item_dict[ent.label_])) + ']', text, flags = re.IGNORECASE)
+            text = re.sub(pattern, '[REDACTED_' + ent.label_ + '_' + str(len(item_dict[ent.label_])) + ']', text, flags = re.IGNORECASE)
     
     return (text)
 
@@ -89,7 +89,7 @@ def mask_using_phonenumbers(text):
             if item not in mappings[data_type]:
                 mappings[data_type][item] = f"{data_type.upper()}_{counters[data_type]}"
                 counters[data_type] += 1
-            return ('[' + mappings[data_type][item] + ']')
+            return ('[REDACTED_' + mappings[data_type][item] + ']')
         return replacer
 
     country_codes = list(phonenumbers.SUPPORTED_REGIONS)

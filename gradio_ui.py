@@ -1,6 +1,7 @@
 import os
 import gradio as gr
 import masking
+import medical_masking
 import re
 import google.generativeai as genai
 from dotenv import load_dotenv, find_dotenv
@@ -83,6 +84,8 @@ def process_input(inp: str) -> str:
     inp = masking.mask_using_regex(inp)
 
     inp = masking.mask_using_NER(inp)
+
+    inp = medical_masking.mask_medical_entities(inp)
 
     return (inp)
 
