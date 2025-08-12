@@ -1,4 +1,4 @@
-# DataGuard — Intelligent De-Identification & Privacy Protection
+# ![icon](https://cdn-icons-png.flaticon.com/512/6356/6356296.png) DataGuard — Intelligent De-Identification & Privacy Protection
 A modular system for automatic detection and anonymization of **Personally Identifiable Information (PII)** and **Protected Health Information (PHI)**.
 
 ---
