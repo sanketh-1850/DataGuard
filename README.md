@@ -1,4 +1,4 @@
-# ![icon](https://cdn-icons-png.flaticon.com/512/6356/6356296.png) DataGuard — Intelligent De-Identification & Privacy Protection
+# <img src="https://cdn-icons-png.flaticon.com/512/6356/6356296.png" width="33" height="33" /> DataGuard — Intelligent De-Identification & Privacy Protection
 A modular system for automatic detection and anonymization of **Personally Identifiable Information (PII)** and **Protected Health Information (PHI)**.
 
 ---
@@ -28,12 +28,12 @@ A Gradio UI provides an interactive frontend, and the "Masked-Gemini" integratio
 ---
 ## Installation & Quick Start
  ```bash
-git clone <your-repo-url>
-cd <your-repo-folder>
+git clone https://github.com/sanketh-1850/DataGuard.git
+cd DataGuard
 python3 -m venv venv
 source venv/bin/activate  # macOS/Linux
 pip install -r requirements.txt
-python app.py
+python main.py
  ```
  ---
  ## Future Work
