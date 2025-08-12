@@ -22,7 +22,7 @@ A Gradio UI provides an interactive frontend, and the "Masked-Gemini" integratio
 ## Tech Stack
 - **Languages:** Python (3.8+)
 - **NLP:** spaCy, scispacy
-- **Utilities:** phonenumbers, regex, pandas
+- **Utilities:** phonenumbers, regex, google genai
 - **Frontend:** Gradio
 
 ---

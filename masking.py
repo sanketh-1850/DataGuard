@@ -5,22 +5,6 @@ import phonenumbers
 nlp = spacy.load('en_core_web_trf')
 
 
-'''
-PII:
-names -
-organisations -
-emails -
-phone -
-locations -
-SSNs
-credit card -
-Money information -
-Date -
-Address
-DOB -
-'''
-
-
 def mask_using_regex(text):
     # Regular expression patterns
     patterns = {
